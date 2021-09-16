@@ -32,7 +32,7 @@ export default class VigenereCipheringMachine {
       'Z',
     ]
   }
-  encrypt(str, key) {
+  cipher(str, key, direction){ //direction true - encr; false - decr
     if (typeof str !== 'string' || typeof key !== 'string') throw new Error('Incorrect arguments!')
     this.key = key;
     const keyArr = key.split('').map(letter => this.alphabet.indexOf(letter.toUpperCase()))
@@ -41,42 +41,22 @@ export default class VigenereCipheringMachine {
     for (let i = 0; i < strArr.length; i++){
       const letterIndex = this.alphabet.indexOf(strArr[i]) ;
       if (letterIndex >= 0){
-        let newI = (letterIndex + keyArr[counter % keyArr.length])%this.alphabet.length;
+        let newI = direction ? (letterIndex + keyArr[counter % keyArr.length])%this.alphabet.length : (letterIndex - keyArr[counter % keyArr.length])%this.alphabet.length;
         newI = newI < 0 ? newI + this.alphabet.length : newI;
         strArr[i] = this.alphabet[newI]
         counter++
       }
     }
-    if (!this.isDirect) strArr.reverse();
     return strArr.join('');
+  }
+  encrypt(str, key) {
+    let output = this.cipher(str,key,true);
+    if (!this.isDirect) output = output.split('').reverse().join('');
+    return output;
   }
   decrypt(str, key = this.key) {
-    if (typeof str !== 'string' || typeof key !== 'string') throw new Error('Incorrect arguments!')
-    
-    const keyArr = key.split('').map(letter => this.alphabet.indexOf(letter.toUpperCase()))
-    const strArr = str.toUpperCase().split('')
-    let counter = 0;
-    for (let i = 0; i < strArr.length; i++){
-      const letterIndex = this.alphabet.indexOf(strArr[i]) ;
-      if (letterIndex >= 0){
-        let newI = (letterIndex - keyArr[counter % keyArr.length] ) % this.alphabet.length;
-        newI = newI < 0 ? newI + this.alphabet.length : newI;
-        strArr[i] = this.alphabet[newI]
-        counter++;
-      }  
-    }
-    if (!this.isDirect) strArr.reverse();
-    return strArr.join('');
+    let output = this.cipher(str,key,false);
+    if (!this.isDirect) output = output.split('').reverse().join('');
+    return output;
   }
 }
-
-// const directMachine = new VigenereCipheringMachine();
-// const reverseMachine = new VigenereCipheringMachine(false);
-
-// console.log (reverseMachine.encrypt('attack at dawn!', 'alphonse')) //=> '!ULLD XS XQHIEA'
-
-// console.log (reverseMachine.decrypt('AEIHQX SX DLLU!', 'alphonse'))// => '!NWAD TA KCATTA'
-
-//directMachine.encrypt('attack at dawn!', 'alphonse') => 'AEIHQX SX DLLU!'
-
-//directMachine.decrypt('AEIHQX SX DLLU!', 'alphonse') => 'ATTACK AT DAWN!'
