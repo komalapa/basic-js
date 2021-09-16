@@ -37,13 +37,18 @@ import { NotImplementedError } from '../extensions/index.js';
     return this
   },
   removeLink(position) {
-    console.log('del', position, typeof position, this.getLength(), 'throw?', (!position || typeof position !== 'number' || position > this.getLength()))
+    console.log('del', this.showChain(), position)
+    //console.log('del', position, typeof position, this.getLength(), 'throw?', (!position || typeof position !== 'number' || position > this.getLength()))
     if (!position || typeof position !== 'number' || position > this.getLength() || position < 1){
       this.node = undefined;
       throw new Error ("You can't remove incorrect link!")
     } 
     let count = 0;
     let node = this.node;
+    if (position === 1){ //first is special item
+      this.node = this.node.next;
+      return this
+    }
     while (typeof node.next != 'undefined'){
       count++;
       console.log('count',count, 'pos', position)
@@ -71,6 +76,18 @@ import { NotImplementedError } from '../extensions/index.js';
     }
     return this
   },
+  showChain(){
+    let node = this.node;
+    const chain = [];
+    while (typeof node.next != 'undefined'){
+      // chain.push(node.node)
+      node.node === null ? chain.push('null') : chain.push(node.node)
+    
+      node = node.next
+    }
+    node.node === null ? chain.push('null') : chain.push(node.node)
+    return '( ' + chain.join(' )~~( ') + ' )'
+  },
   finishChain() {
     let node = this.node;
     const chain = [];
@@ -82,7 +99,7 @@ import { NotImplementedError } from '../extensions/index.js';
     }
     node.node === null ? chain.push('null') : chain.push(node.node)
     this.node = undefined;
-    console.log('chain',chain)
+    //console.log('chain',chain)
     return '( ' + chain.join(' )~~( ') + ' )'
   }
 };
