@@ -20,12 +20,63 @@ import { NotImplementedError } from '../extensions/index.js';
  * 
  */
 export default class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+// class VigenereCipheringMachine {
+  constructor(isDirect = true){
+    this.isDirect = isDirect
+    this.alphabet = [
+      'A','B','C','D','E',
+      'F','G','H','I','J',
+      'K','L','M','N','O',
+      'P','Q','R','S','T',
+      'U','V','W','X','Y',
+      'Z',
+    ]
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  encrypt(str, key) {
+    if (typeof str !== 'string' || typeof key !== 'string') throw new Error('Incorrect arguments!')
+    this.key = key;
+    const keyArr = key.split('').map(letter => this.alphabet.indexOf(letter.toUpperCase()))
+    const strArr = str.toUpperCase().split('')
+    let counter = 0;
+    for (let i = 0; i < strArr.length; i++){
+      const letterIndex = this.alphabet.indexOf(strArr[i]) ;
+      if (letterIndex >= 0){
+        let newI = (letterIndex + keyArr[counter % keyArr.length])%this.alphabet.length;
+        newI = newI < 0 ? newI + this.alphabet.length : newI;
+        strArr[i] = this.alphabet[newI]
+        counter++
+      }
+    }
+    if (!this.isDirect) strArr.reverse();
+    return strArr.join('');
+  }
+  decrypt(str, key = this.key) {
+    if (typeof str !== 'string' || typeof key !== 'string') throw new Error('Incorrect arguments!')
+    
+    const keyArr = key.split('').map(letter => this.alphabet.indexOf(letter.toUpperCase()))
+    const strArr = str.toUpperCase().split('')
+    let counter = 0;
+    for (let i = 0; i < strArr.length; i++){
+      const letterIndex = this.alphabet.indexOf(strArr[i]) ;
+      if (letterIndex >= 0){
+        let newI = (letterIndex - keyArr[counter % keyArr.length] ) % this.alphabet.length;
+        newI = newI < 0 ? newI + this.alphabet.length : newI;
+        strArr[i] = this.alphabet[newI]
+        counter++;
+      }  
+    }
+    if (!this.isDirect) strArr.reverse();
+    return strArr.join('');
   }
 }
+
+// const directMachine = new VigenereCipheringMachine();
+// const reverseMachine = new VigenereCipheringMachine(false);
+
+// console.log (reverseMachine.encrypt('attack at dawn!', 'alphonse')) //=> '!ULLD XS XQHIEA'
+
+// console.log (reverseMachine.decrypt('AEIHQX SX DLLU!', 'alphonse'))// => '!NWAD TA KCATTA'
+
+//directMachine.encrypt('attack at dawn!', 'alphonse') => 'AEIHQX SX DLLU!'
+
+//directMachine.decrypt('AEIHQX SX DLLU!', 'alphonse') => 'ATTACK AT DAWN!'
