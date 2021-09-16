@@ -15,6 +15,6 @@ import { NotImplementedError } from '../extensions/index.js';
  *
  */
 export default function isMAC48Address(n) {
-  const re = new RegExp('^(([A-F]|[0-9]){2}-){5}([A-F]|[0-9]){2}$')
-  return re.test(n.toUpperCase())
+  const re = new RegExp('^(([A-F]|[a-f]|[0-9]){2}-){5}([A-F]|[a-f]|[0-9]){2}$')
+  return re.test(n)
 }
