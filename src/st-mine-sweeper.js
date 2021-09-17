@@ -23,26 +23,34 @@ import { NotImplementedError } from '../extensions/index.js';
  *  [1, 1, 1]
  * ]
  */
+
+
 export default function minesweeper (matrix) {
+  const countAround = (i,j) =>{
+    let count = 0;
+    const startI = (i === 0) ? 0 : i - 1;
+    const startJ = (j === 0) ? 0 : j - 1; 
+    const endI = (i === matrix.length-1) ? matrix.length-1 : i + 1;
+    const endJ = (j === matrix[i].length-1) ? matrix[i].length-1 : j + 1; 
+    // console.log(i,j, '>>>>', startI, startJ, endI, endJ)
+    for (let n=startI; n<=endI; n++){
+      for(let m =startJ; m<=endJ; m++){
+        if (!(m === i && n === j)){
+          if (matrix[n][m]) count++;
+        }
+      }
+    }
+    // console.log('count', count)
+    return count
+  }
+
+
+  
   const output = []
   for (let i=0; i<matrix.length; i++){
+    output[i]=[]
     for(let j=0; j<matrix[i].length; j++){
-      let sum = 0;
-      console.log(matrix[i][j], i,j)
-      if (i>0){//prev row
-        //sum = matrix[i-1][j-1] ? sum + 1 : sum;
-        sum = matrix[i-1][j] ? sum + 1 : sum;
-        sum = matrix[i-1][j+1] ? sum + 1 : sum;
-      }
-      // sum = matrix[i][j-1] ? sum + 1 : sum;
-      sum = matrix[i][j] ? sum + 1 : sum;
-      sum = matrix[i][j+1] ? sum + 1 : sum;
-      if (i < matrix.length -1){//next row
-        //sum = matrix[i+1][j-1] ? sum + 1 : sum;
-        sum = matrix[i+1][j] ? sum + 1 : sum;
-        sum = matrix[i+1][j+1] ? sum + 1 : sum;
-      }
-      output[i][j] = sum
+      output[i][j] = countAround(i,j)
     }
   }
   return output
